@@ -28,7 +28,7 @@ class _ClimaAppState extends State<ClimaApp> {
     } else if (iconCode.startsWith('09') ||
         iconCode.startsWith('10') ||
         iconCode.startsWith('11')) {
-      return  Color.fromARGB(204, 53, 127, 187); // Chuvoso
+      return  Color.fromARGB(204, 96, 165, 223); // Chuvoso
     } else {
       return Colors.white; // Padrão
     }
