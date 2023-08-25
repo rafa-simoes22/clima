@@ -15,9 +15,24 @@ class ClimaApp extends StatefulWidget {
 
 class _ClimaAppState extends State<ClimaApp> {
   String apiKey = '0e67b33ca85072cac666b59fede86903';
-  String cityName = 'Nome da Cidade';
+  String cityName = '';
   String temperature = '0';
-  String weatherIconUrl = '';
+  String weatherIcon = '';
+  Color backgroundColor = Colors.white; // Cor de fundo padrão
+
+  Color getColorForWeatherIcon(String iconCode) {
+    if (iconCode.startsWith('01') || iconCode.startsWith('02')) {
+      return  Color.fromARGB(255, 243, 232, 134); // Ensolarado ou nublado
+    } else if (iconCode.startsWith('03') || iconCode.startsWith('04')) {
+      return  Color.fromARGB(255, 131, 130, 130); // Nublado
+    } else if (iconCode.startsWith('09') ||
+        iconCode.startsWith('10') ||
+        iconCode.startsWith('11')) {
+      return  Color.fromARGB(204, 53, 127, 187); // Chuvoso
+    } else {
+      return Colors.white; // Padrão
+    }
+  }
 
   void fetchWeatherData() async {
     String apiUrl =
@@ -30,8 +45,9 @@ class _ClimaAppState extends State<ClimaApp> {
         var data = jsonDecode(response.body);
         setState(() {
           temperature = data['main']['temp'].toString();
-          var weatherId = data['weather'][0]['icon'];
-          weatherIconUrl = 'http://openweathermap.org/img/w/$weatherId.png';
+          weatherIcon = data['weather'][0]['icon'];
+
+          backgroundColor = getColorForWeatherIcon(weatherIcon);
         });
       }
     } catch (e) {
@@ -44,8 +60,9 @@ class _ClimaAppState extends State<ClimaApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Clima App'),
+          title: Text('Climatempo'),
         ),
+        backgroundColor: backgroundColor, // Definir a cor de fundo
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -60,8 +77,9 @@ class _ClimaAppState extends State<ClimaApp> {
                 style: TextStyle(fontSize: 50),
               ),
               SizedBox(height: 20),
-              weatherIconUrl.isNotEmpty
-                  ? Image.network(weatherIconUrl)
+              weatherIcon.isNotEmpty
+                  ? Image.network(
+                      'http://openweathermap.org/img/w/$weatherIcon.png')
                   : SizedBox(),
               SizedBox(height: 20),
               ElevatedButton(
